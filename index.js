@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 
-const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xu7wd.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xu7wd.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -53,15 +53,16 @@ client.connect((err) => {
     app.get("/orders", (req, res) => {
         productCollectionForOrder.find().toArray((err, items) => {
             res.send(items);
-        });     
+        });
     });
-    
-    app.delete('/delete/:_id',(req,res) => {
-        productCollection.deleteOne({_id:ObjectId(req.params.id)})
-        .then((result) => {
-            res.send(result.deletedCount>0);
-        })
-    });
+
+
+    app.delete('deleteEvent/:id', (req, res) => {
+        const id = ObjectID(req.params.id);
+        console.log('delete this', id);
+        productCollectionForOrder.deleteOne({ _id: id })
+            .then(documents => res.send(!!documents.value))
+    })
 
 });
 
